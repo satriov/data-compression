@@ -31,7 +31,7 @@ void usage();
 void main(int argc, char **argv)
 {
     int row, col, row_size, col_size;
-    char input_image[50], qimage[50];
+    char input_image[512], qimage[512];
     unsigned char **imgin;
     int *bound, *reco, input, label, output, numlev, numbits, c;
     int minvalue, maxvalue, range, level, stepsize, temp, end_flag;
@@ -164,6 +164,13 @@ void main(int argc, char **argv)
    fwrite(&row_size,1,sizeof(int),ofp);
    fwrite(&col_size,1,sizeof(int),ofp);
   
+	struct Queue* code_write;
+	code_write = (struct Queue*) malloc(sizeof(struct Queue));
+	code_write->front = NULL;
+	code_write->rear = NULL;
+	code_write->size = 0;
+	
+//	Print(&(code_write)->front);
 
 /* encode each pixel into an integer label and store  */
    end_flag = 0;
@@ -174,9 +181,18 @@ void main(int argc, char **argv)
             end_flag = 1;
           input = imgin[row][col];
           label = encuqi(input,bound,numlev);
-          stuffit(label,numbits,ofp,end_flag);
+//          printf("%d %d, ", input, label);
+//          printf("%d ", &ofp);
+//          stuffit(label,numbits,&ofp,end_flag);
+			stuffit(label,numbits,&code_write,end_flag);
          }
 
+//	Print(&code_write->front);
+	while(code_write->size >= 8) {
+		write_to_file(&ofp, &code_write);
+	}
+	
+//	printf("%d", code_write->size);
 
    }
 void usage()
