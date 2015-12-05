@@ -35,7 +35,7 @@
 /*
 * Local prototypes.
 */
-#ifdef__STDC__
+#ifdef __STDC__
 unsigned int find_child_node( int parent_code, int child_character );
 unsigned int decode_string( unsigned int offset, unsigned int code );
 #else
@@ -52,7 +52,7 @@ char *Usage = "in-file out-file\n\n";
 * actually plain text codes.
 *
 * Note that in order to handle 16 bit segmented compilers, such as most
-* of the MS-DOS compilers, it was necessary to break up the dictionary 
+* of the MS-DOS compilers, it was necessary to break up the dictionary
 * into a table of smaller dictionary pointers. Every reference to the
 * dictionary was replaced by a macro that did a pointer dereference
 * first. By breaking up the index along byte boundaries we should be as
@@ -61,10 +61,10 @@ char *Usage = "in-file out-file\n\n";
 struct dictionary
 {
  int code_value;
- int parent_code:
+ int parent_code;
  char character;
-} *dict[ TABLE_BANKS ]:
-#define DICT( i ) dict[ i >> 8 ][ i & Oxff ]
+} *dict[ TABLE_BANKS ];
+#define DICT( i ) dict[ i >> 8 ][ i & 0xff ]
 /*
 * Other global data structures. The decode_stack is used to reverse
 * strings that come out of the tree during decoding. next_code is the
@@ -108,7 +108,7 @@ void InitializeStorage( void )
  for ( i = 0 ; i < TABLE_BANKS ; i++ ) {
  dict[ i ] = ( struct dictionary *)
  calloc( 256, sizeof ( struct dictionary ) );
- if ( dict[ i ] == NULL ) 
+ if ( dict[ i ] == NULL )
  fatal_error( "Error allocating dictionary space" );
  }
 }
@@ -126,7 +126,7 @@ void CompressFile( input, output, argc, argv )
 FILE *input;
 BIT_FILE *output;
 int argc;
-char *argv[]
+char *argv[];
 {
  int character;
  int string_code;
@@ -162,12 +162,12 @@ char *argv[]
  }
  OutputBits( output, (unsigned long) string_code, current_code_bits );
  OutputBits( output, (unsigned long) END_OF_STREAM, current_code_bits);
- while ( argc— > 0 )
+ while ( argc --> 0 )
  printf( "Unknown argument: %s\n", *argv++ );
 }
 /*
 * The file expander operates much like the encoder. It has to
-* read in codes, then convert the codes to a string of characters. 
+* read in codes, then convert the codes to a string of characters.
 * The only catch in then whole operation occurs when the encoder
 * encounters a CHAR+STRING+CHAR+STRING+CHAR sequence. When this
 * occurs, the encoder outputs a code that is not presently defined
@@ -227,7 +227,7 @@ char *argv[];
 * by using an exclusive OR combination of the prefix and character.
 * This code also has to check for collisions, and handles them by
 * jumping around in the table.
-*/ 
+*/
 unsigned int find_child_node( parent_code, child_character )
 int parent_code;
 int child_character;
@@ -267,4 +267,4 @@ unsigned int code;
  decode_stack[ count++ ] = (char) code;
  return( count );
 }
-/**************************** End of LZW15V.C **************************/ 
+/**************************** End of LZW15V.C **************************/
